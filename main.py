@@ -1,5 +1,5 @@
 import time
-from new_webdriver import SeleniumWebdriver
+from webdriver import SeleniumWebdriver
 from config import username, password, ical_url
 import logging as log
 from session import RequestSession

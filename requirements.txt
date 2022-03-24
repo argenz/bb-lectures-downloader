@@ -1,0 +1,4 @@
+ics==0.7
+requests==2.23.0
+selenium==4.1.0
+webdriver-manager==3.5.2

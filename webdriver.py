@@ -3,11 +3,12 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 import logging as log
 import time
-from courses_dicts import course_url_codes
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.chrome.options import Options
+import sys
 
 #NEW
 from selenium.webdriver.common.action_chains import ActionChains
@@ -15,15 +16,19 @@ from selenium.webdriver.common.action_chains import ActionChains
 log.basicConfig(level=log.INFO, format='%(asctime)s|%(module)s:%(lineno)s|%(levelname)s|%(message)s')
 log.info('Imported logging config')
 
+#options = Options()
+#options.add_argument('--disable-blink-features=AutomationControlled')
+#options.add_argument("--headless")
+
 class SeleniumWebdriver(): 
 
     # Start selenium webdriver
     def __init__(self, url='https://blackboard.unibocconi.it/ultra/'): 
-        self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+        self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install())) #, options=options)
         self.driver.get(url)
         self.cookies = self.driver.get_cookies()
-        self.driver_wait = WebDriverWait(self.driver, 15)
-        self.parent_window = 0
+        self.driver_wait = WebDriverWait(self.driver, 10)
+        self.parent_window = 0 
 
     # Login 
     def login(self, username, password):
@@ -34,7 +39,15 @@ class SeleniumWebdriver():
         pswd.send_keys(password)
 
         self.driver.find_element(By.NAME,'_eventId_proceed').click()
-        log.warning("Succesfully logged in.")
+        time.sleep(1)
+
+        if "idp.unibocconi.it" in self.driver.current_url: 
+            sys.exit("=======> \t ERROR: Login failed. Check credentials in file: recordings_scraper/config.py")
+            
+        else: 
+            log.warning("Succesfully logged in.")
+        
+        
         
     # Get session cookies
     def get_cookies_dict(self):
@@ -45,8 +58,35 @@ class SeleniumWebdriver():
 
     # Naivgate to course
     def nav_to_course(self, courseId):
-        url_code = course_url_codes.get(courseId)
-        self.driver.get(f"https://blackboard.unibocconi.it/ultra/courses/{url_code}/outline")   
+        
+        self.driver.get("https://blackboard.unibocconi.it/ultra/course")   
+        log.warning("Opened My Courses page.")
+
+        search = self.driver_wait.until(
+            EC.element_to_be_clickable((By.XPATH, '//*[@id="main-content-inner"]/div/div[1]/div[1]/div/div/div[9]/div/header/bb-search-box/div/input'))
+        )
+        search.click()
+        search.clear()
+        search.send_keys(courseId)
+        log.warning(f"Searched course ID: {courseId}.")
+        #sendKeys(Keys.RETURN)
+
+        time.sleep(3) #NECESSARY
+
+        # TODO: Make more robust and include margin for error. 
+        course_cards = self.driver_wait.until(
+            EC.visibility_of_all_elements_located((By.CLASS_NAME, "multi-column-course-id"))
+        )
+        for card in course_cards: 
+            print(f"Element text: {card.text}")
+            if str(courseId) in card.text:
+                card.click()
+                log.warning(f"Openend course page of course ID: {courseId}.")
+
+                
+
+        #url_code = course_url_codes.get(courseId)
+        #self.driver.get(f"https://blackboard.unibocconi.it/ultra/courses/{url_code}/outline")   
     
     # Open dropdown with video recordings view option 
     def view_recordings(self): 
@@ -54,20 +94,19 @@ class SeleniumWebdriver():
             EC.element_to_be_clickable((By.XPATH, "//*[@id='main-content']/div[3]/div/div[3]/div/div/div/div[2]/div/div[2]/div[2]/div/div[1]/div[2]/aside/div/div[7]/bb-overflow-menu/button"))
         )
         button.click()
-        log.warning('Dots clicked.')
 
         dropdown = self.driver_wait.until(
             EC.presence_of_element_located((By.ID, "collab-dropdown_video_li"))
         )
         dropdown.click()
-        log.warning('View recordings clicked.')
+        log.warning('Opening recordings page.')
         
         try:
             time.sleep(5)
             embedded_iframe = self.driver_wait.until(EC.presence_of_all_elements_located((By.TAG_NAME, 'iframe')))[0]
             iframe = embedded_iframe.get_attribute('src')
             self.driver.get(iframe)
-            log.warning("Successfully switched to iframe.")
+            log.warning("Successfully switched to recordings iframe.")
 
         except TimeoutException as err: 
             print(f"Timeout Exception: Could not load iframe.")
@@ -95,10 +134,13 @@ class SeleniumWebdriver():
 
         action = ActionChains(self.driver)
         action.move_to_element(watch_now_dropdown).click().perform()
-                
+
+        log.warning("Opening recording to be downloaded.")
+
         child = self.driver.window_handles[1]
         #switch to browser tab
         self.driver.switch_to.window(child)
+        
     
     def get_recording_url(self): 
         video = self.driver_wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'vjs-tech')))
