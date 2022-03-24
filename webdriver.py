@@ -14,17 +14,16 @@ import sys
 from selenium.webdriver.common.action_chains import ActionChains
 
 log.basicConfig(level=log.INFO, format='%(asctime)s|%(module)s:%(lineno)s|%(levelname)s|%(message)s')
-log.info('Imported logging config')
+log.info('Imported logging config.')
 
-#options = Options()
-#options.add_argument('--disable-blink-features=AutomationControlled')
-#options.add_argument("--headless")
+options = Options()
+options.add_argument("--headless")
 
 class SeleniumWebdriver(): 
 
     # Start selenium webdriver
     def __init__(self, url='https://blackboard.unibocconi.it/ultra/'): 
-        self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install())) #, options=options)
+        self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
         self.driver.get(url)
         self.cookies = self.driver.get_cookies()
         self.driver_wait = WebDriverWait(self.driver, 10)
@@ -45,7 +44,7 @@ class SeleniumWebdriver():
             sys.exit("=======> \t ERROR: Login failed. Check credentials in file: recordings_scraper/config.py")
             
         else: 
-            log.warning("Succesfully logged in.")
+            log.info("Succesfully logged in.")
         
         
         
@@ -60,7 +59,7 @@ class SeleniumWebdriver():
     def nav_to_course(self, courseId):
         
         self.driver.get("https://blackboard.unibocconi.it/ultra/course")   
-        log.warning("Opened My Courses page.")
+        log.info("Opened My Courses page.")
 
         search = self.driver_wait.until(
             EC.element_to_be_clickable((By.XPATH, '//*[@id="main-content-inner"]/div/div[1]/div[1]/div/div/div[9]/div/header/bb-search-box/div/input'))
@@ -68,12 +67,10 @@ class SeleniumWebdriver():
         search.click()
         search.clear()
         search.send_keys(courseId)
-        log.warning(f"Searched course ID: {courseId}.")
-        #sendKeys(Keys.RETURN)
+        log.info(f"Searched course ID: {courseId}.")
 
         time.sleep(3) #NECESSARY
 
-        # TODO: Make more robust and include margin for error. 
         course_cards = self.driver_wait.until(
             EC.visibility_of_all_elements_located((By.CLASS_NAME, "multi-column-course-id"))
         )
@@ -81,12 +78,9 @@ class SeleniumWebdriver():
             print(f"Element text: {card.text}")
             if str(courseId) in card.text:
                 card.click()
-                log.warning(f"Openend course page of course ID: {courseId}.")
+                log.info(f"Openend course page of course ID: {courseId}.")
+            # TODO: Make more robust and include margin for error. 
 
-                
-
-        #url_code = course_url_codes.get(courseId)
-        #self.driver.get(f"https://blackboard.unibocconi.it/ultra/courses/{url_code}/outline")   
     
     # Open dropdown with video recordings view option 
     def view_recordings(self): 
@@ -99,14 +93,14 @@ class SeleniumWebdriver():
             EC.presence_of_element_located((By.ID, "collab-dropdown_video_li"))
         )
         dropdown.click()
-        log.warning('Opening recordings page.')
+        log.info('Opening recordings page.')
         
         try:
             time.sleep(5)
             embedded_iframe = self.driver_wait.until(EC.presence_of_all_elements_located((By.TAG_NAME, 'iframe')))[0]
             iframe = embedded_iframe.get_attribute('src')
             self.driver.get(iframe)
-            log.warning("Successfully switched to recordings iframe.")
+            log.info("Successfully switched to recordings iframe.")
 
         except TimeoutException as err: 
             print(f"Timeout Exception: Could not load iframe.")
@@ -135,7 +129,7 @@ class SeleniumWebdriver():
         action = ActionChains(self.driver)
         action.move_to_element(watch_now_dropdown).click().perform()
 
-        log.warning("Opening recording to be downloaded.")
+        log.info("Opening recording to be downloaded.")
 
         child = self.driver.window_handles[1]
         #switch to browser tab
@@ -161,12 +155,12 @@ class SeleniumWebdriver():
             try:
                 button_close = self.driver_wait.until(EC.presence_of_element_located((By.CLASS_NAME, "close-modal-button")))
                 button_close.click()
-                log.warning("Announcement found and closed.")
+                log.info("Announcement found and closed.")
             except: 
                 log.warning("Cannot find close button.")
 
         except TimeoutException as err: 
-            log.warning("No Announcements.")
+            log.info("No Announcements.")
 
 
 

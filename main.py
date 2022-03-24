@@ -14,7 +14,7 @@ courseIds = cal.get_courseIds_today()
 
 if len(courseIds)==0: sys.exit("You did not have lectures today.")
 
-log.warning(f"Today's Lectures were: {courseIds}")
+log.info(f"Today's Lectures were: {courseIds}")
 
 #start webdriver
 driver = SeleniumWebdriver()
@@ -28,7 +28,6 @@ mySession.update_cookies(cookies)
 #begin scraping
 for courseId in courseIds: 
     driver.nav_to_course(courseId)
-    #time.sleep(10)
     driver.check_announcemements_and_skip()
     driver.view_recordings()
     buttons = driver.get_course_recordings_buttons()
@@ -41,8 +40,8 @@ for courseId in courseIds:
         
         filename = f"{courseId}_{recording_name}"
         
-        mySession.download_file(filename, recording_url) #Specify correct path, possibly in the TEMP directory
-        driver.close_rec_tab() #go back to main tab
+        mySession.download_file(filename, recording_url) 
+        driver.close_rec_tab() 
         i+=2
 
 mySession.close()

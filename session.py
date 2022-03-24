@@ -1,6 +1,5 @@
 import requests
 import logging as log
-import tracemalloc
 from config import dest
 
 class RequestSession(): 
@@ -13,17 +12,14 @@ class RequestSession():
 
     def download_file(self, name, url):
         name = name+".mp4"
-        #tracemalloc.start()
+
         response = self.session.get(url, stream=True)
-        log.warning(f"Obtained recording URL response with status code: {response.status_code}")
+        log.info(f"Obtained recording URL response with status code: {response.status_code}")
 
         with open(f"{dest}{name}",'wb') as f: 
-            log.warning(f"Downloading {name}.....")
+            log.info(f"Downloading {name}.....")
             f.write(response.content)
-            log.warning("Finished downloading.")
-        
-        #print(tracemalloc.get_traced_memory())
-        #tracemalloc.stop()
+            log.info("Finished downloading.")
     
     def close(self): 
         self.session.close()
