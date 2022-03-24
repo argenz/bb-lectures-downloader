@@ -1,6 +1,6 @@
 # bb-rec-scraper
 
-This scraper uses selenium webdriver for Google Chrome. Hence, you need to have Google Chrome installed. 
+This scraper uses selenium webdriver for Google Chrome. The LATEST Google Chrome is required. 
 
 To run:  
 1. Download the repository  
