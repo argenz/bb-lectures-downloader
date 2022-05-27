@@ -1,6 +1,6 @@
 # bb-rec-scraper
 
-This scraper uses selenium webdriver for Google Chrome. The LATEST Google Chrome is required. 
+This scraper uses selenium webdriver for Google Chrome to download lecture videos from the university's platform. The LATEST Google Chrome is required. 
 
 To run:  
 1. Download the repository  
