@@ -1,6 +1,6 @@
 # bb-rec-scraper
 
-This scraper uses selenium webdriver for Google Chrome to download lecture videos from the university's platform. The webdriver manager automatically fetches the latest webdriver version, hence the LATEST Google Chrome version is also required. 
+This scraper downloads lecture videos from Blackboard Collaborate, the university courses platform. The webdriver-manager automatically fetches the latest webdriver version, hence the LATEST Google Chrome version is required. 
 
 To run:  
 1. Download the repository  
