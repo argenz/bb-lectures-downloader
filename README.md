@@ -2,7 +2,7 @@
 
 This scraper downloads lecture videos from Blackboard Collaborate, the Bocconi university courses platform. 
 
-This was build because the lectures recordings remain available only for 24h after the lecture, so students that want to keep the recordings for revision have have to log in daily to download them. 
+This was build because the lectures recordings remain available only for 24h after the lecture, so students that want to keep the recordings for revision have to log in daily to download them. 
 I built this scraper that automates the retrival of the recording links for all lectures on a given day, based your specific lecture icalendar link provided by the university. 
 
 To make it 100% hands free, I installed this script on AWS and set up a trigger to it daily, and configured it to download the lectures to an S3 bucket. 
