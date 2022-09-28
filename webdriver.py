@@ -1,17 +1,15 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.common.exceptions import TimeoutException
 from webdriver_manager.chrome import ChromeDriverManager
+import sys
 import logging as log
 import time
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.chrome.options import Options
-import sys
-
-#NEW
-from selenium.webdriver.common.action_chains import ActionChains
 
 log.basicConfig(level=log.INFO, format='%(asctime)s|%(module)s:%(lineno)s|%(levelname)s|%(message)s')
 log.info('Imported logging config.')
@@ -145,10 +143,6 @@ class SeleniumWebdriver():
         self.driver.close()
         self.driver.switch_to.window(self.parent_window)
 
-    # When finished: Quit 
-    def quit(self): 
-        self.driver.quit()
-
     def check_announcemements_and_skip(self): 
         try:
             self.driver_wait.until(EC.presence_of_element_located((By.CLASS_NAME, "title-modal"))) 
@@ -162,5 +156,6 @@ class SeleniumWebdriver():
         except TimeoutException as err: 
             log.info("No Announcements.")
 
-
-
+    # When finished: Quit 
+    def quit(self): 
+        self.driver.quit()
