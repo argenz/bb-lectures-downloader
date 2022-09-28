@@ -44,8 +44,6 @@ class SeleniumWebdriver():
         else: 
             log.info("Succesfully logged in.")
         
-        
-        
     # Get session cookies
     def get_cookies_dict(self):
         cookie_dict = {}
@@ -77,8 +75,6 @@ class SeleniumWebdriver():
             if str(courseId) in card.text:
                 card.click()
                 log.info(f"Openend course page of course ID: {courseId}.")
-            # TODO: Make more robust and include margin for error. 
-
     
     # Open dropdown with video recordings view option 
     def view_recordings(self): 
