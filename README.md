@@ -6,7 +6,7 @@ This was build because the lectures recordings remain available only for 24h aft
 I built this scraper that automates the retrival of the recording links for all lectures on a given day, based a specific lecture icalendar link provided by the university. 
 
 To make it 100% hands free, I installed this script on AWS and set up a trigger to execute it daily, and configured the download of the lectures to an S3 bucket. 
-The cloud configuration part is not explained here, but if you want to do the same and need help sentting it up reach out to me on Linkedin https://www.linkedin.com/in/fcra/.
+The cloud configuration part is not explained here, but if you want to do the same and need help setting it up reach out to me! https://www.linkedin.com/in/fcra/.
 
 # Usage
 The webdriver-manager automatically fetches the latest webdriver version, hence the LATEST Google Chrome version is required. 
